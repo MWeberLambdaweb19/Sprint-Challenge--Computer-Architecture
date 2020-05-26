@@ -120,11 +120,11 @@ class CPU:
         self.alu('CMP', reg_a, reg_b)
         return (True, 3)
     def dis_jeq(self, reg_a, reg_b):
-        pass
+        return (True, 2)
     def dis_jmp(self, reg_a, reg_b):
         pass
     def dis_jne(self, reg_a, reg_b):
-        pass
+        return (True, 2)
         
 ### STACK FUNCTIONS
     def stack_pop(self, reg_a):
