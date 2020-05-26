@@ -63,7 +63,7 @@ class CPU:
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
-
+        
         if op == "CMP":
             # Lesser
             if self.reg[reg_a] < self.reg[reg_b]:
@@ -128,15 +128,17 @@ class CPU:
         self.alu('CMP', reg_a, reg_b)
         return (True, 3)
     def dis_jeq(self, reg_a, reg_b):
+        if self.flag == EQL:
+            self.dis_jmp(reg_a, reg_b)
+            return (True, 0)
         return (True, 2)
     def dis_jmp(self, reg_a, reg_b):
         self.pc = self.reg[reg_a]
-        return (True, 0)
     def dis_jne(self, reg_a, reg_b):
         if self.flag != EQL:
             self.dis_jmp(reg_a, reg_b)
-        else:
-            return (True, 2)
+            return (True, 0)
+        return (True, 2)
         
 ### STACK FUNCTIONS
     def stack_pop(self, reg_a):
