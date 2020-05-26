@@ -2,14 +2,14 @@
 
 import sys
 
-CALL = 0b01010000
+# These are the only methods needed
+CMP = 0b10100111
+JEQ = 0b01010101
+JMP = None
+JNE = 0b01010110
 LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
-MUL = 0b10100010
-PUSH = 0b01000101
-POP = 0b01000110
-RET = 0b00010001
 
 class CPU:
     """Main CPU class."""
@@ -21,15 +21,15 @@ class CPU:
         self.ram = [0] * 256
         self.running = True
         self.dispatch = {
-            CALL: self.dis_call,
             HLT: self.dis_hlt,
             LDI: self.dis_ldi,
-            MUL: self.dis_mul,
             PRN: self.dis_prn,
-            POP: self.dis_pop,
-            PUSH: self.dis_push,
-            RET: self.dis_ret,
+            CMP: self.dis_cmp,
+            JEQ: self.dis_jeq,
+            JMP: self.dis_jmp,
+            JNE: self.dis_jne,
         }
+        self.flag = 0b00000000
         self.sp = 7
         self.reg[self.sp] = 0xf4
 
@@ -59,11 +59,13 @@ class CPU:
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
-        if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
-        elif op == "MUL":
-            self.reg[reg_a] = (self.reg[reg_a] * self.reg[reg_b])
-        #elif op == "SUB": etc
+        if op == "CMP":
+            if self.reg[reg_a] == self.reg[reg_b]:
+                self.flag = 0b00000001
+            elif self.reg[reg_a] > self.reg[reg_b]:
+                self.flag = 0b00000010
+            elif self.reg[reg_a] < self.reg[reg_b]:
+                self.flag = 0b00000100
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -114,27 +116,15 @@ class CPU:
     def dis_prn(self, reg_a, reg_b):
         print(self.reg[reg_a])
         return (True, 2)
-    def dis_mul(self, reg_a, reg_b):
-        self.alu('MUL', reg_a, reg_b)
+    def dis_cmp(self, reg_a, reg_b):
+        self.alu('CMP', reg_a, reg_b)
         return (True, 3)
-    def dis_pop(self, reg_a, reg_b):
-        self.stack_pop(reg_a)
-        return (True, 2)
-    def dis_push(self, reg_a, reg_b):
-        self.stack_push(reg_a)
-        return (True, 2)
-    def dis_call(self, reg_a, reg_b):
-        # reg b since I need pc + 2
-        # call pushes onto a stack
-        self.stack_push(reg_b)
-        # reg a since I need pc + 1
-        subroutine = self.reg[reg_a]
-        return (True, subroutine)
-    def dis_ret(self, reg_a, reg_b):
-        self.stack_pop(reg_a)
-    def dis_add(self, reg_a, reg_b):
-        self.alu('ADD', reg_a, reg_b)
-        return (True, 3)
+    def dis_jeq(self, reg_a, reg_b):
+        pass
+    def dis_jmp(self, reg_a, reg_b):
+        pass
+    def dis_jne(self, reg_a, reg_b):
+        pass
         
 ### STACK FUNCTIONS
     def stack_pop(self, reg_a):
@@ -154,7 +144,6 @@ class CPU:
 
 
 ### LEGACY CODE
-## DAY ONE
 
 # Hash tables corresponding to address
         # item = {key is the address in memory and the value is the 'HLT'}
