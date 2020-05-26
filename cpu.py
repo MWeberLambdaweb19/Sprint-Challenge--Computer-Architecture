@@ -11,6 +11,11 @@ LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 
+# Flags
+LSS = 0b00000100
+GTR = 0b00000010
+EQL = 0b00000001
+
 class CPU:
     """Main CPU class."""
 
@@ -60,12 +65,15 @@ class CPU:
         """ALU operations."""
 
         if op == "CMP":
-            if self.reg[reg_a] == self.reg[reg_b]:
-                self.flag = 0b00000001
+            # Lesser
+            if self.reg[reg_a] < self.reg[reg_b]:
+                self.flag = 0b00000100
+            # Greater
             elif self.reg[reg_a] > self.reg[reg_b]:
                 self.flag = 0b00000010
-            elif self.reg[reg_a] < self.reg[reg_b]:
-                self.flag = 0b00000100
+            # Equal
+            elif self.reg[reg_a] == self.reg[reg_b]:
+                self.flag = 0b00000001
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -125,7 +133,10 @@ class CPU:
         self.pc = self.reg[reg_a]
         return (True, 0)
     def dis_jne(self, reg_a, reg_b):
-        return (True, 2)
+        if self.flag != EQL:
+            self.dis_jmp(reg_a, reg_b)
+        else:
+            return (True, 2)
         
 ### STACK FUNCTIONS
     def stack_pop(self, reg_a):
