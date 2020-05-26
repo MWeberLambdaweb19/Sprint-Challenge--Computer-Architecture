@@ -5,7 +5,7 @@ import sys
 # These are the only methods needed
 CMP = 0b10100111
 JEQ = 0b01010101
-JMP = None
+JMP = 0b01010100 
 JNE = 0b01010110
 LDI = 0b10000010
 PRN = 0b01000111
@@ -134,6 +134,7 @@ class CPU:
         return (True, 2)
     def dis_jmp(self, reg_a, reg_b):
         self.pc = self.reg[reg_a]
+        return (True, 0)
     def dis_jne(self, reg_a, reg_b):
         if self.flag != EQL:
             self.dis_jmp(reg_a, reg_b)
