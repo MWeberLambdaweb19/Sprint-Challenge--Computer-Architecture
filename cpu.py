@@ -122,7 +122,8 @@ class CPU:
     def dis_jeq(self, reg_a, reg_b):
         return (True, 2)
     def dis_jmp(self, reg_a, reg_b):
-        pass
+        self.pc = self.reg[reg_a]
+        return (True, 0)
     def dis_jne(self, reg_a, reg_b):
         return (True, 2)
         
