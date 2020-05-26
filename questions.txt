@@ -1,0 +1,7 @@
+-Interview Qs
+
+When is the ALU activated in the CPU?
+
+Why is a CPU stack useful in assembly?
+
+Convert binary to hex
